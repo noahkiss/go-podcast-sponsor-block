@@ -30,7 +30,7 @@ func getYoutubePlaylistData(youtubePlaylistId string, service *youtube.Service) 
 	missingVideos := []models.PodcastEpisode{}
 	pageToken := "first_call"
 	for continue_requesting_playlist_items {
-		call := service.PlaylistItems.List([]string{"snippet", "status"}).
+		call := service.PlaylistItems.List([]string{"snippet", "status", "contentDetails"}).
 			PlaylistId(youtubePlaylistId).
 			MaxResults(50)
 		call.Header().Set("order", "publishedAt desc")

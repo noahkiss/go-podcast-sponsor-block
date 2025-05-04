@@ -10,6 +10,7 @@ type PodcastEpisode struct {
 	EpisodeName        string `json:"episode_name"`
 	EpisodeDescription string `json:"episode_description"`
 	PublishedDate      string `json:"published_date"`
+	VideoPublishedDate string `json:"video_published_date"`
 	Type               string `json:"type" gorm:"index:youtubevideoid_type_channelid_type"`
 	PodcastId          string `json:"podcast_id" gorm:"foreignkey:PodcastId;association_foreignkey:Id"`
 }
@@ -40,6 +41,7 @@ func NewPodcastEpisode(youtubeVideo *youtube.PlaylistItem) PodcastEpisode {
 		EpisodeName:        youtubeVideo.Snippet.Title,
 		EpisodeDescription: youtubeVideo.Snippet.Description,
 		PublishedDate:      youtubeVideo.Snippet.PublishedAt,
+		VideoPublishedDate: youtubeVideo.ContentDetails.VideoPublishedAt,
 		Type:               "PLAYLIST",
 		PodcastId:          youtubeVideo.Snippet.PlaylistId,
 	}

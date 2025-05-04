@@ -50,7 +50,7 @@ func GenerateRssFeed(podcast models.Podcast, host string, podcastType enum.Podca
 			xml.EscapeText(&builder, []byte(podcastEpisode.EpisodeDescription))
 			escapedDescription := builder.String()
 
-			parseTime := parseTimeFromString(podcastEpisode.PublishedDate)
+			parseTime := parseTimeFromString(podcastEpisode.VideoPublishedDate, podcastEpisode.PublishedDate)
 
 			podcastItem := Item{
 				Title:       podcastEpisode.EpisodeName,
@@ -72,10 +72,26 @@ func GenerateRssFeed(podcast models.Podcast, host string, podcastType enum.Podca
 	return ytPodcast.Bytes()
 }
 
-func parseTimeFromString(date string) time.Time {
-	parseTime, err := time.Parse(time.RFC3339, date)
+// func parseTimeFromString(date string) time.Time {
+// 	parseTime, err := time.Parse(time.RFC3339, date)
+// 	if err != nil {
+// 		log.Error("Failed to parse time: " + date)
+// 	}
+// 	return parseTime
+// }
+
+func parseTimeFromString(primaryDate string, fallbackDate string) time.Time {
+	if primaryDate != "" {
+		parseTime, err := time.Parse(time.RFC3339, primaryDate)
+		if err == nil {
+			return parseTime
+		}
+		log.Warnf("Failed to parse primary time '%s': %v", primaryDate, err)
+	}
+
+	parseTime, err := time.Parse(time.RFC3339, fallbackDate)
 	if err != nil {
-		log.Error("Failed to parse time: " + date)
+		log.Errorf("Failed to parse fallback time '%s': %v", fallbackDate, err)
 	}
 	return parseTime
 }
